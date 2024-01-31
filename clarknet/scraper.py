@@ -1,6 +1,6 @@
 import os
 
-from scraper import Scraper
+from abstract_scraper import Scraper
 
 
 class ClarknetScraper(Scraper):

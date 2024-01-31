@@ -2,7 +2,7 @@ import os.path
 import re
 import sys
 
-from scraper import Scraper
+from abstract_scraper import Scraper
 
 
 class WorldCup98Scraper(Scraper):
