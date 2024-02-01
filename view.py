@@ -27,7 +27,8 @@ def parse_options():
     parser.add_argument(
         '--part',
         help='Part from within the input to read',
-        dest='part'
+        dest='part',
+        default=None
     )
 
     parser.add_argument(
@@ -52,6 +53,13 @@ def parse_options():
         default=None
     )
 
+    parser.add_argument(
+        '--output',
+        help='Output file. If not specified, output is written to stdout.',
+        dest='output_file',
+        default=None
+    )
+
     return parser.parse_args(sys.argv[1:])
 
 
@@ -65,8 +73,17 @@ def main():
         options.duration
     )
 
+    output = sys.stdout
+
+    if options.output_file is not None:
+        output = open(options.output_file, 'w')
+
     for line in viewer.read(options.part):
-        print(line)
+        output.write(line)
+        output.write('\n')
+
+    if output != sys.stdout:
+        output.close()
 
 
 if __name__ == '__main__':

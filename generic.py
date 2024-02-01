@@ -6,6 +6,7 @@ import shutil
 import zipfile
 from datetime import timedelta
 from enum import Enum
+from typing import Tuple
 
 
 def get_archive_format(file_path: str) -> str | None:
@@ -64,6 +65,26 @@ def parse_duration(duration: str) -> timedelta:
         current = ''
 
     return timedelta(seconds=total)
+
+
+def get_files(file_path: str, exclude_empty: bool = True) -> list[Tuple[str, str | None]]:
+    if os.path.isdir(file_path):
+        return [
+            (path, None) \
+            for path in os.listdir(file_path) \
+            if not exclude_empty or os.path.getsize(path) > 0
+        ]
+
+    _, extension = os.path.splitext(file_path)
+    if extension.lower() == '.zip':
+        with zipfile.ZipFile(file_path) as file:
+            return [
+                (file_path, part.filename) \
+                for part in  file.filelist \
+                if not exclude_empty or part.file_size > 0
+            ]
+
+    raise ValueError('The specified file extension is not supported')
 
 
 def extract_file(file_path: str):
