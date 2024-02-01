@@ -7,25 +7,7 @@ from enum import Enum
 import clarknet.scraper
 import nasa.scraper
 import worldcup98.scraper
-
-
-class DatasetType(Enum):
-    NONE = 0
-    WORLDCUP98 = 1
-    CLARKNET = 2
-    NASA = 3
-
-    @staticmethod
-    def get_option_names() -> list[str]:
-        return [dataset_type.name for dataset_type in DatasetType]
-
-    @staticmethod
-    def parse(name: str) -> DatasetType:
-        return next(
-            filter(lambda dataset_type: dataset_type.name == name, DatasetType),
-            None
-        )
-
+from generic import DatasetType
 
 SCRAPER_MAP = {
     DatasetType.WORLDCUP98: worldcup98.scraper.WorldCup98Scraper,

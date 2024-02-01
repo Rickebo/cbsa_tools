@@ -29,30 +29,6 @@ class Scraper(ABC):
         os.rename(temp_name, destination)
 
     @staticmethod
-    def get_archive_format(file_path: str) -> str | None:
-        formats = [
-            '.gz'
-        ]
-
-        _, ext = os.path.splitext(file_path)
-        ext = ext.lower()
-
-        return ext if ext in formats else None
-
-    @staticmethod
-    def extract_file(file_path: str):
-        ext = Scraper.get_archive_format(file_path)
-        new_file = file_path.rstrip(ext)
-
-        if ext == '.gz':
-            with gzip.open(file_path, 'rb') as archive:
-                with open(new_file, 'wb') as extracted:
-                    shutil.copyfileobj(archive, extracted)
-                    return new_file
-        else:
-            return None
-
-    @staticmethod
     def read_input_files(file_path: str, line_regex: re.Pattern = None) -> list[str]:
         line_regex = line_regex or Scraper.INPUT_FILE_REGEX
         result = []
