@@ -103,10 +103,15 @@ class WorldCup98DataPoint:
         return json.dumps(self.__dict__)
 
 
-
 class WorldCup98Viewer(Viewer):
-    def __init__(self, input_path: str, start_time: str, stop_time: str):
-        super().__init__(input_path, start_time, stop_time)
+    def __init__(
+            self,
+            input_path: str,
+            start_time: str | None,
+            stop_time: str | None,
+            duration: str | None = None
+    ):
+        super().__init__(input_path, start_time, stop_time, duration)
 
     def read(self, part: str | None = None) -> Iterable[str]:
         struct_format = '>IIIIcccc'
@@ -119,10 +124,8 @@ class WorldCup98Viewer(Viewer):
                 if self.start_time is not None and time < self.start_time:
                     continue
 
-                if self.stop_time is not None and time > self.stop_time:
+                if self.stop_time is not None and time >= self.stop_time:
                     continue
 
                 data_point = WorldCup98DataPoint(*values)
                 yield data_point.to_json()
-
-

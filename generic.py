@@ -4,6 +4,7 @@ import gzip
 import os
 import shutil
 import zipfile
+from datetime import timedelta
 from enum import Enum
 
 
@@ -32,6 +33,37 @@ def open_file(archive: str, file_name: str | None = None):
         return archive.open(file_name)
     else:
         raise ValueError('File type is not supported.')
+
+
+def parse_duration(duration: str) -> timedelta:
+    if not duration:
+        raise ValueError('Cannot parse empty duration.')
+
+    current = ''
+    multipliers = {
+        'd': 3600 * 24,
+        'h': 3600,
+        'm': 60,
+        's': 1
+    }
+
+    total = 0
+    for ch in duration:
+        if ch.isspace():
+            continue
+
+        if ch.isdigit():
+            current += ch
+            continue
+
+        multiplier = multipliers.get(ch)
+        if not multiplier or not current:
+            raise ValueError(f'Cannot parse duration from {duration}.')
+
+        total += int(current) * multiplier
+        current = ''
+
+    return timedelta(seconds=total)
 
 
 def extract_file(file_path: str):

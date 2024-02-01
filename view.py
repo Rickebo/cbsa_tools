@@ -44,13 +44,27 @@ def parse_options():
         default=None
     )
 
+    parser.add_argument(
+        '--duration',
+        help='Duration to view data for in hours. Start or stop time is required '
+             'when this is specified.',
+        dest='duration',
+        default=None
+    )
+
     return parser.parse_args(sys.argv[1:])
 
 
 def main():
     options = parse_options()
     dataset = DatasetType.parse(options.dataset)
-    viewer = viewer_map[dataset](options.input, options.start_time, options.stop_time)
+    viewer = viewer_map[dataset](
+        options.input,
+        options.start_time,
+        options.stop_time,
+        options.duration
+    )
+
     for line in viewer.read(options.part):
         print(line)
 
