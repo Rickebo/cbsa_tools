@@ -151,7 +151,7 @@ class WorldCup98Viewer(Viewer):
 
         return self.ordered_files[start_file:end_file + 1]
 
-    def read(self, parts: list[str] | str | None = None) -> Iterable[str]:
+    def read(self, parts: list[str] | str | None = None) -> Iterable[dict]:
         struct_format = '>IIIIcccc'
         size = struct.calcsize(struct_format)
 
