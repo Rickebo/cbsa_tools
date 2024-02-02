@@ -27,5 +27,5 @@ Use ``py view.py --help`` for instructions on how the utility is used.
 
 To dump a whole day from the world cup 98 dataset to a file in JSON format, use:
 ````bash
-py view.py --dataset WORLDCUP98 --input worldcup98.zip --start 1998-07-23T00:00:00 --duration 1d --output test.json
+py view.py --dataset WORLDCUP98 --input cache/workdcup98 --start 1998-07-23T00:00:00 --duration 1m --output test.json
 ````

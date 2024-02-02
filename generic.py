@@ -31,7 +31,11 @@ def open_file(archive: str, file_name: str | None = None):
             raise ValueError('No sub file specified')
 
         archive = zipfile.ZipFile(archive, 'r')
-        return archive.open(file_name)
+        file = archive.open(file_name)
+
+        return gzip.open(file, 'rb') \
+            if get_archive_format(file_name) == '.gz' else \
+            file
     else:
         raise ValueError('File type is not supported.')
 
@@ -69,9 +73,10 @@ def parse_duration(duration: str) -> timedelta:
 
 def get_files(file_path: str, exclude_empty: bool = True) -> list[Tuple[str, str | None]]:
     if os.path.isdir(file_path):
+        dir_files = [os.path.join(file_path, path) for path in os.listdir(file_path)]
         return [
             (path, None) \
-            for path in os.listdir(file_path) \
+            for path in dir_files \
             if not exclude_empty or os.path.getsize(path) > 0
         ]
 

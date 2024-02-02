@@ -1,4 +1,5 @@
 import os.path
+import struct
 from abc import abstractmethod
 from datetime import datetime, timedelta
 from typing import Iterable, Tuple, IO
@@ -27,10 +28,12 @@ class Viewer:
         start, end = self.get_file_times()
         self.start_times: dict[Tuple[str, str | None], datetime] = start
         self.end_times: dict[Tuple[str, str | None], datetime] = end
-        self.ordered_files = list(sorted(
-            self.files,
-            key=lambda file: self.start_times[file]
-        ))
+        self.ordered_files = list(
+            sorted(
+                (file for file in self.files if file in self.start_times),
+                key=lambda file: self.start_times[file]
+            )
+        )
 
         if duration is not None:
             if not (self.start_time is None) ^ (self.stop_time is None):
@@ -73,9 +76,11 @@ class Viewer:
         end = dict()
 
         for file_path, part in files:
-            with open_file(file_path, part) as file:
-                start[file_path, part] = self.read_first_time(file)
-                # end[file_path, part] = self.read_last_time(file)
+            try:
+                with open_file(file_path, part) as file:
+                    start[file_path, part] = self.read_first_time(file)
+            except struct.error:
+                pass
 
         return start, end
 

@@ -119,8 +119,8 @@ class WorldCup98DataPoint:
 
         return from_list[index]
 
-    def to_json(self):
-        return json.dumps(self.__dict__)
+    def to_dict(self):
+        return self.__dict__
 
 
 class WorldCup98Viewer(Viewer):
@@ -174,4 +174,4 @@ class WorldCup98Viewer(Viewer):
                         break
 
                     data_point = WorldCup98DataPoint(*values)
-                    yield data_point.to_json()
+                    yield data_point.to_dict()

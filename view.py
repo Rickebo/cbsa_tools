@@ -1,4 +1,5 @@
 import argparse
+import json
 import sys
 
 import worldcup98.viewer
@@ -79,7 +80,7 @@ def main():
         output = open(options.output_file, 'w')
 
     for line in viewer.read(options.part):
-        output.write(line)
+        output.write(json.dumps(line))
         output.write('\n')
 
     if output != sys.stdout:
