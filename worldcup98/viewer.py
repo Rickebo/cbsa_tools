@@ -160,18 +160,23 @@ class WorldCup98Viewer(Viewer):
 
         if not parts:
             parts = self.get_parts()
+        else:
+            parts = [(self.input_path, part) for part in parts]
+
+        chunk_size = 1000
 
         for part in parts:
             with generic.open_file(*part) as file:
-                while data := file.read(size):
-                    values = struct.unpack(struct_format, data)
-                    time = datetime.fromtimestamp(values[0])
+                while data := file.read(size * chunk_size):
+                    for offset in range(0, len(data), size):
+                        values = struct.unpack_from(struct_format, data, offset=offset)
+                        time = datetime.fromtimestamp(values[0])
 
-                    if self.start_time is not None and time < self.start_time:
-                        break
+                        if self.start_time is not None and time < self.start_time:
+                            break
 
-                    if self.stop_time is not None and time >= self.stop_time:
-                        break
+                        if self.stop_time is not None and time >= self.stop_time:
+                            break
 
-                    data_point = WorldCup98DataPoint(*values)
-                    yield data_point.to_dict()
+                        data_point = WorldCup98DataPoint(*values)
+                        yield data_point.to_dict()
