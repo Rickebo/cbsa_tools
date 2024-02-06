@@ -127,7 +127,7 @@ def view(viewer: Viewer, options):
         if output != sys.stdout:
             output.close()
     elif output_format == OutputOption.PLOT:
-        bin_count = 100
+        bin_count = 256
 
         first_time = start_date
         last_time = end_date

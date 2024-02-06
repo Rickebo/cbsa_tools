@@ -1,0 +1,25 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docker
+Dockerfile
+
+# Byte compiled stuff
+**/__pycache__/
+**/*.py[cod]
+
+# PyCharm
+.idea
+
+# Python environment
+.venv/
+
+# Data files
+cache/
+*.zip
+
+# Scripts and readmes
+*.sh
+*.md
