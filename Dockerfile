@@ -20,4 +20,4 @@ COPY . .
 # specified by the user when ruinning the container. For example, running the
 # container like "docker run <container name> view.py" passes view.py to py -u,
 # resulting in "py -u view.py" being run.
-ENTRYPOINT ["py", "-u"]
+ENTRYPOINT ["python3", "-u"]
