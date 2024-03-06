@@ -11,25 +11,25 @@ class LogViewerDataPoint:
             self,
             host: str,
             time: datetime,
+            method: str,
             path: str,
             code: int,
             size: int
     ):
-        self.host = host
-        self.time = time
-        self.path = path
-        self.code = code
-        self.size = size
+        self.host: str = host
+        self.time: datetime = time
+        self.method: str = method
+        self.path: str = path
+        self.code: int = code
+        self.size: int = size
 
     def to_dict(self):
-        data = copy.deepcopy(self.__dict__)
-        data['time'] = self.time.isoformat()
-        return data
+        return copy.deepcopy(self.__dict__)
 
 
 class LogViewer(Viewer):
     LOG_LINE_REGEX = re.compile(
-        r'([\w\-.]+) - - \[([\w\/:\s-]+)] "(.*)" (\d+) (\w+)')
+        r'([\w\-.]+) - - \[([\w\/:\s-]+)] "(\w+) (.*)" (\d+) (\w+)')
 
     def __init__(
             self,
@@ -75,15 +75,17 @@ class LogViewer(Viewer):
 
         host = str(match.group(1))
         time = str(match.group(2))
-        path = str(match.group(3))
-        code = int(match.group(4))
-        size = int(match.group(5))
+        method = str(match.group(3))
+        path = str(match.group(4))
+        code = int(match.group(5))
+        size = int(match.group(6))
 
         time = datetime.strptime(time, '%d/%b/%Y:%H:%M:%S %z')
 
         return LogViewerDataPoint(
             host=host,
             time=time,
+            method=method,
             path=path,
             code=code,
             size=size

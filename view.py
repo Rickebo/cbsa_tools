@@ -3,8 +3,10 @@ from __future__ import annotations
 import argparse
 import datetime
 import json
+import re
 import sys
 from enum import Enum
+from typing import Any
 
 import worldcup98.viewer
 from abstract_viewer import Viewer
@@ -21,6 +23,7 @@ viewer_map = {
 class OutputOption(Enum):
     JSON = 1
     PLOT = 2
+    SQL = 3
 
     @staticmethod
     def get_option_names():
@@ -95,6 +98,14 @@ def parse_options():
         dest='output_format'
     )
 
+    parser.add_argument(
+        '--database-table',
+        help='Name of database table to use when outputting data in SQL format',
+        type=str,
+        dest='db_table',
+        default='data'
+    )
+
     return parser.parse_args(sys.argv[1:])
 
 
@@ -111,19 +122,56 @@ def main():
     view(viewer, options)
 
 
+def format_json(data: dict[str, Any]) -> str:
+    for key, value in data:
+        if isinstance(value, datetime.datetime):
+            data[key] = value.isoformat()
+
+    return json.dumps(data)
+
+
+def format_sql(table_name: str, data: dict[str, Any]) -> str:
+    string_filter = re.compile(r'[^\w\/:\s.\-?!,~]')
+
+    def format_value(value: Any) -> str:
+        if isinstance(value, str):
+            value = string_filter.sub('', value)
+            return '\'' + value + '\''
+        if isinstance(value, int) or isinstance(value, float):
+            return str(value)
+        if isinstance(value, datetime.datetime):
+            return f'CAST(\'{value.replace(tzinfo=None).isoformat()}\' AS DATETIME)'
+
+    if string_filter.match(table_name):
+        raise ValueError(f'Table name contains risky characters.')
+
+    ordered = list(sorted(data.items(), key=lambda pair: pair[0]))
+    keys = ', '.join(key for key, value in ordered)
+    values = ', '.join(format_value(value) for key, value in ordered)
+
+    return f'INSERT INTO {table_name} ({keys}) VALUES ({values});'
+
+
 def view(viewer: Viewer, options):
     output_format = OutputOption.parse(options.output_format)
     start_date = viewer.start_time
     end_date = viewer.stop_time
     data = viewer.read(options.part)
-    if output_format == OutputOption.JSON:
+
+    formatters = {
+        OutputOption.JSON: format_json,
+        OutputOption.SQL: lambda line: format_sql(options.db_table, line)
+    }
+
+    if output_format in formatters:
         output = sys.stdout
 
         if options.output_file is not None:
             output = open(options.output_file, 'w')
 
         for line in data:
-            output.write(json.dumps(line))
+            text = formatters[output_format](line)
+            output.write(text)
             output.write('\n')
 
         if output != sys.stdout:
