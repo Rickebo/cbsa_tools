@@ -5,14 +5,16 @@ import datetime
 import json
 import sys
 from enum import Enum
-from typing import Iterable
 
 import worldcup98.viewer
 from abstract_viewer import Viewer
 from generic import DatasetType
+from log_viewer import LogViewer
 
 viewer_map = {
-    DatasetType.WORLDCUP98: worldcup98.viewer.WorldCup98Viewer
+    DatasetType.WORLDCUP98: worldcup98.viewer.WorldCup98Viewer,
+    DatasetType.CLARKNET: LogViewer,
+    DatasetType.NASA: LogViewer
 }
 
 

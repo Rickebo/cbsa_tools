@@ -24,6 +24,8 @@ def get_archive_format(file_path: str) -> str | None:
 def open_file(archive: str, file_name: str | None = None):
     ext = get_archive_format(archive)
 
+    if not ext:
+        return open(archive, 'r')
     if ext == '.gz':
         return gzip.open(archive, 'rb')
     if ext == '.zip':
@@ -88,6 +90,9 @@ def get_files(file_path: str, exclude_empty: bool = True) -> list[Tuple[str, str
                 for part in  file.filelist \
                 if not exclude_empty or part.file_size > 0
             ]
+
+    if not extension:
+        return [(file_path, '')]
 
     raise ValueError('The specified file extension is not supported')
 
