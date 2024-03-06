@@ -14,8 +14,10 @@ class Viewer:
             input_path: str,
             start_time: str | None,
             stop_time: str | None,
-            duration: str | None = None
+            duration: str | None = None,
+            read_flags: str | None = None
     ):
+        self.read_flags: str = read_flags
         self.input_path = os.path.abspath(input_path)
         self.is_dir = os.path.isdir(input_path)
         self.start_time: datetime | None = datetime.fromisoformat(start_time) \
@@ -77,7 +79,7 @@ class Viewer:
 
         for file_path, part in files:
             try:
-                with open_file(file_path, part) as file:
+                with open_file(file_path, part, read_flags=self.read_flags) as file:
                     start[file_path, part] = self.read_first_time(file)
             except struct.error:
                 pass

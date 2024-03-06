@@ -21,21 +21,25 @@ def get_archive_format(file_path: str) -> str | None:
     return ext if ext in formats else None
 
 
-def open_file(archive: str, file_name: str | None = None):
+def open_file(
+        archive: str,
+        file_name: str | None = None,
+        read_flags: str | None = None
+):
     ext = get_archive_format(archive)
 
     if not ext:
-        return open(archive, 'r')
+        return open(archive, read_flags or 'r')
     if ext == '.gz':
-        return gzip.open(archive, 'rb')
+        return gzip.open(archive, read_flags or 'rb')
     if ext == '.zip':
         if file_name is None:
             raise ValueError('No sub file specified')
 
-        archive = zipfile.ZipFile(archive, 'r')
+        archive = zipfile.ZipFile(archive, read_flags or 'r')
         file = archive.open(file_name)
 
-        return gzip.open(file, 'rb') \
+        return gzip.open(file, read_flags or 'rb') \
             if get_archive_format(file_name) == '.gz' else \
             file
     else:
@@ -73,7 +77,8 @@ def parse_duration(duration: str) -> timedelta:
     return timedelta(seconds=total)
 
 
-def get_files(file_path: str, exclude_empty: bool = True) -> list[Tuple[str, str | None]]:
+def get_files(file_path: str, exclude_empty: bool = True) -> list[
+    Tuple[str, str | None]]:
     if os.path.isdir(file_path):
         dir_files = [os.path.join(file_path, path) for path in os.listdir(file_path)]
         return [
@@ -87,9 +92,12 @@ def get_files(file_path: str, exclude_empty: bool = True) -> list[Tuple[str, str
         with zipfile.ZipFile(file_path) as file:
             return [
                 (file_path, part.filename) \
-                for part in  file.filelist \
+                for part in file.filelist \
                 if not exclude_empty or part.file_size > 0
             ]
+
+    if extension.lower() == '.gz':
+        return [(file_path, '')]
 
     if not extension:
         return [(file_path, '')]

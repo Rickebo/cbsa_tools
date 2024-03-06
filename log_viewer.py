@@ -1,9 +1,11 @@
 import copy
+import encodings
 import re
 from datetime import datetime
 from typing import Iterable, IO
 
 from abstract_viewer import Viewer
+from generic import open_file
 
 
 class LogViewerDataPoint:
@@ -38,7 +40,13 @@ class LogViewer(Viewer):
             stop_time: str | None,
             duration: str | None = None
     ):
-        super().__init__(input_path, start_time, stop_time, duration)
+        super().__init__(
+            input_path,
+            start_time,
+            stop_time,
+            duration,
+            read_flags='r'
+        )
 
     def read_last_time(self, file: IO[bytes]) -> datetime | None:
         last_line = None
@@ -52,8 +60,11 @@ class LogViewer(Viewer):
         return self._convert_to_datapoint(last_line)
 
     def read(self, part: str | None = None) -> Iterable[str]:
-        with open(self.input_path) as file:
+        with open_file(self.input_path, read_flags=self.read_flags) as file:
             while line := file.readline():
+                if isinstance(line, bytes):
+                    line = line.decode('utf-8')
+
                 dp = self._convert_to_datapoint(line)
                 if dp is None:
                     continue
@@ -95,5 +106,8 @@ class LogViewer(Viewer):
         line = file.readline()
         if line is None:
             return None
+
+        if isinstance(line, bytes):
+            line = line.decode('utf-8')
 
         return self._convert_to_datapoint(line).time
