@@ -109,7 +109,9 @@ class Scraper(ABC):
                 if not os.path.exists(file_path):
                     self.download_file(url_format % file, file_path)
 
-                if self.get_archive_format(file_path) is not None:
+                if hasattr(self, 'get_archive_format') and \
+                        hasattr(self, 'extract_file') and \
+                        self.get_archive_format(file_path) is not None:
                     self.extract_file(file_path)
 
                 ongoing_list.remove(file)
