@@ -123,7 +123,7 @@ def main():
 
 
 def format_json(data: dict[str, Any]) -> str:
-    for key, value in data:
+    for key, value in data.items():
         if isinstance(value, datetime.datetime):
             data[key] = value.isoformat()
 
