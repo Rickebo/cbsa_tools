@@ -63,7 +63,7 @@ class LogViewer(Viewer):
         with open_file(self.input_path, read_flags=self.read_flags) as file:
             while line := file.readline():
                 if isinstance(line, bytes):
-                    line = line.decode('utf-8')
+                    line = line.decode('utf-8', 'replace')
 
                 dp = self._convert_to_datapoint(line)
                 if dp is None:
@@ -108,6 +108,6 @@ class LogViewer(Viewer):
             return None
 
         if isinstance(line, bytes):
-            line = line.decode('utf-8')
+            line = line.decode('utf-8', 'replace')
 
         return self._convert_to_datapoint(line).time
