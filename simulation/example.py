@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 
 from scaling_time_options import ScalingTimeOptions
 from service_instance_state import ServiceInstanceState
-from simulation.target_service import TargetService
+from target_service import TargetService
 
 SCALE_UP_TIME = ScalingTimeOptions(mean_time=10, std_dev=5)
 SCALE_DOWN_TIME = ScalingTimeOptions(mean_time=10, std_dev=5)
