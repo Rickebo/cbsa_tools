@@ -1,4 +1,5 @@
 import math
+import sys
 from datetime import datetime, timedelta
 
 from matplotlib import pyplot as plt
@@ -93,7 +94,9 @@ def plot_loads(
     ax2.set_ylabel('Instances')
 
     plt.savefig('example-result.png')
-    plt.show()
+
+    if '--show' in sys.argv[1:]:
+        plt.show()
 
 
 def simulate_run():
