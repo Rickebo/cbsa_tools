@@ -93,7 +93,8 @@ def plot_loads(
     ax.legend(lines, [line.get_label() for line in lines], loc=0)
     ax2.set_ylabel('Instances')
 
-    plt.savefig('example-result.png')
+    if '--save' in sys.argv[1:]:
+        plt.savefig('example-result.png')
 
     if '--show' in sys.argv[1:]:
         plt.show()
