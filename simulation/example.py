@@ -1,3 +1,4 @@
+import argparse
 import math
 import sys
 from datetime import datetime, timedelta
@@ -76,7 +77,10 @@ def plot_loads(
         applied_loads: list[float],
         experienced_loads: list[float],
         total_instances: list[int],
-        ready_instances: list[int]
+        ready_instances: list[int],
+        show_plot: bool = False,
+        save_plot: bool = False,
+        save_path: str | None = None
 ):
     fig, ax = plt.subplots()
     ax2 = ax.twinx()
@@ -93,10 +97,10 @@ def plot_loads(
     ax.legend(lines, [line.get_label() for line in lines], loc=0)
     ax2.set_ylabel('Instances')
 
-    if '--save' in sys.argv[1:]:
-        plt.savefig('example-result.png')
+    if save_plot and save_path is not None:
+        plt.savefig(save_path)
 
-    if '--show' in sys.argv[1:]:
+    if show_plot:
         plt.show()
 
 
@@ -142,9 +146,43 @@ def simulate_run():
     return minutes, per_second_loads, experienced_loads, instances, ready_instances
 
 
+def parse_args(args):
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--show',
+        dest='show_figure',
+        help='Whether to show a figure of the plotted data.',
+        action='store_true'
+    )
+
+    parser.add_argument(
+        '--save',
+        dest='save_figure',
+        help='Whether to save a figure of the plotted data to a file.',
+        action='store_true'
+    )
+
+    parser.add_argument(
+        '--save-path',
+        dest='save_path',
+        type=str,
+        help='The path to where the figure of the plotted data is saved. Default is '
+             'example-result.png',
+        default='example-result.png'
+    )
+
+    return parser.parse_args(args)
+
+
 def main():
+    options = parse_args(sys.argv[1:])
     args = simulate_run()
-    plot_loads(*args)
+    plot_loads(
+        *args,
+        show_plot=options.show_figure,
+        save_plot=options.save_figure,
+        save_path=options.save_path
+    )
 
 
 if __name__ == '__main__':

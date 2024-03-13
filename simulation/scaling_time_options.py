@@ -3,9 +3,14 @@ from datetime import timedelta, datetime
 
 
 class ScalingTimeOptions:
-    def __init__(self, mean_time: float, std_dev: float):
-        self.mean_time: float = mean_time
-        self.std_dev: float = std_dev
+    def __init__(self, mean_time: float | timedelta, std_dev: float | timedelta):
+        self.mean_time: float = mean_time \
+            if isinstance(mean_time, float) or isinstance(mean_time, int) else \
+            mean_time.total_seconds()
+
+        self.std_dev: float = std_dev \
+            if isinstance(std_dev, float) or isinstance(std_dev, int) else \
+            std_dev.total_seconds()
 
     def random(self, start_time: datetime | None = None) -> float | datetime:
         """
