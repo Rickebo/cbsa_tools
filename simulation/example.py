@@ -87,6 +87,8 @@ def plot_loads(
 
     lines = []
     lines.extend(ax2.plot(minutes, ready_instances, '-', label='Ready instances'))
+    # Currently commented as it wasn't too useful and only contributed to clutter the
+    # plot. Uncomment if needed
     # lines.extend(ax2.plot(minutes, total_instances, label='Total instances'))
     lines.extend(ax.plot(minutes, experienced_loads, '-r', label='Experienced load'))
     lines.extend(ax.plot(minutes, applied_loads, '-g', label='Applied load'))
