@@ -61,6 +61,7 @@ class TargetService:
         self.terminating_load: float = terminating_load
         self.experienced_load: float = 0
         self.processed_load: float = 0
+        self.start_time: datetime = datetime.now()
 
         starting = [
             TargetServiceInstance.start_new(
@@ -92,6 +93,9 @@ class TargetService:
             for instance in self.instances \
             if instance.state == ServiceInstanceState.READY
         )
+
+    def elapsed(self) -> timedelta:
+        return self.current_time - self.start_time
 
     def count(self, state: ServiceInstanceState):
         """
